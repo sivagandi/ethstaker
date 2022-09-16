@@ -188,39 +188,39 @@ A preview of MEV and mev-boost can be seen on https://youtu.be/sZYJiLxp9ow
 Install [a recent version of Go](https://go.dev/doc/install). [Go is also available](https://go.dev/dl/) for architectures that are different than linux AMD64. Adjust if needed.
 
 ```console
-$ cd ~
-$ wget https://go.dev/dl/go1.19.1.linux-amd64.tar.gz
-$ sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.19.1.linux-amd64.tar.gz
-$ export PATH=$PATH:/usr/local/go/bin
-$ echo 'PATH="$PATH:/usr/local/go/bin"' >> ~/.profile
-$ rm go1.19.1.linux-amd64.tar.gz
+cd ~
+wget https://go.dev/dl/go1.19.1.linux-amd64.tar.gz
+sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.19.1.linux-amd64.tar.gz
+export PATH=$PATH:/usr/local/go/bin
+echo 'PATH="$PATH:/usr/local/go/bin"' >> ~/.profile
+rm go1.19.1.linux-amd64.tar.gz
 ```
 
 Create a user account for the service to run under. This account will not be able to log into the machine. It will only be used to run the service.
 
 ```console
-$ sudo useradd --no-create-home --shell /bin/false mevboost
+sudo useradd --no-create-home --shell /bin/false mevboost
 ```
 
 Install common build tools to build mev-boost. If you are on Ubuntu or on most Debian derivatives, you can use these commands:
 
 ```console
-$ sudo apt -y update
-$ sudo apt -y install build-essential
+sudo apt -y update
+sudo apt -y install build-essential
 ```
 
 Install mev-boost globally.
 
 ```console
-$ CGO_CFLAGS="-O -D__BLST_PORTABLE__" go install github.com/flashbots/mev-boost@latest
-$ sudo cp ~/go/bin/mev-boost /usr/local/bin
-$ sudo chown mevboost:mevboost /usr/local/bin/mev-boost
+CGO_CFLAGS="-O -D__BLST_PORTABLE__" go install github.com/flashbots/mev-boost@latest
+sudo cp ~/go/bin/mev-boost /usr/local/bin
+sudo chown mevboost:mevboost /usr/local/bin/mev-boost
 ```
 
 Create a systemd service file to store the service config which tells systemd to run mev-boost as the mevboost user.
 
 ```console
-$ sudo nano /etc/systemd/system/mevboost.service
+sudo nano /etc/systemd/system/mevboost.service
 ```
 
 Paste the following into the file to run mev-boost on Mainnet. You **must** replace `https://example.com` in this configuration with one or many existing relays. We have [a list of relays](MEV-relay-list.md) you can explore. Exit and save once done (`Ctrl` + `X`, `Y`, `Enter`).
@@ -253,21 +253,21 @@ Selecting your relays **can be an important decision** for some stakers. Some re
 Reload systemd to reflect the changes. If you edit that file again to add or remove relays, you need will to reload systemd again to reflect the changes before restarting your mev-boost service.
 
 ```console
-$ sudo systemctl daemon-reload
+sudo systemctl daemon-reload
 ```
 
 And then start the service with the following command and check the status to make sure it’s running correctly.
 
 ```console
-$ sudo systemctl start mevboost
-$ sudo systemctl status mevboost
+sudo systemctl start mevboost
+sudo systemctl status mevboost
 ```
 
 If you did everything right, it should say active (running) in green. If not then go back and repeat the steps to fix the problem. Press Q to quit.
 Lastly, enable mev-boost to start on boot.
 
 ```console
-$ sudo systemctl enable mevboost
+sudo systemctl enable mevboost
 ```
 
 ### Configure your consensus and validator client to use mev-boost
@@ -293,11 +293,11 @@ And restart the service(s) you changed: `sudo systemctl restart SERVICENAME`
 When a new version is released, you can update mev-boost.
 
 ```console
-$ CGO_CFLAGS="-O -D__BLST_PORTABLE__" go install github.com/flashbots/mev-boost@latest
-$ sudo systemctl stop mevboost
-$ sudo cp ~/go/bin/mev-boost /usr/local/bin
-$ sudo chown mevboost:mevboost /usr/local/bin/mev-boost
-$ sudo systemctl start mevboost
+CGO_CFLAGS="-O -D__BLST_PORTABLE__" go install github.com/flashbots/mev-boost@latest
+sudo systemctl stop mevboost
+sudo cp ~/go/bin/mev-boost /usr/local/bin
+sudo chown mevboost:mevboost /usr/local/bin/mev-boost
+sudo systemctl start mevboost
 ```
 
 ## Support
